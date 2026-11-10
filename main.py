@@ -38,68 +38,133 @@ from PySide6.QtWidgets import (
 from storage import Store
 
 
-INK = "#EAF4F5"
-BLUE = "#52CBD5"
-MINT = "#69D8B6"
-CORAL = "#FF927F"
-
-
-STYLESHEET = """
-* { font-family: 'DejaVu Sans', 'Segoe UI', Arial, sans-serif; color: #EAF4F5; }
-QMainWindow, QWidget#appRoot { background: #07141D; }
-QWidget#sidebar { background: #0A1D29; border-right: 1px solid #1C3440; }
-QWidget#topbar { background: #091A25; border-bottom: 1px solid #1C3440; }
-QLabel { background: transparent; }
-QLabel#muted { color: #8AA7B4; }
-QLabel#pageTitle { color: #F0F7F7; font-size: 27px; font-weight: 650; }
-QLabel#sectionTitle { color: #EAF4F5; font-size: 16px; font-weight: 620; }
-QLabel#metricValue { color: #F0F7F7; font-size: 22px; font-weight: 650; }
-QLabel#metricHint { color: #8AA7B4; font-size: 12px; }
-QLabel#eyebrow { color: #82A7B2; font-size: 12px; }
-QFrame#summaryBand { background: #0E2732; border: 1px solid #1D3D49; border-radius: 10px; }
-QFrame#surfaceQuiet { background: #0D202B; border: 1px solid #1B3743; border-radius: 14px; }
-QFrame#divider { background: #203C47; border: none; max-height: 1px; }
-QFrame#verticalRule { background: #25434D; border: none; max-width: 1px; }
-QFrame#reminderStrip { background: #102A35; border: 1px solid #23505A; border-left: 3px solid #65D7B6; border-radius: 8px; }
-QPushButton { border: 0; border-radius: 10px; padding: 8px 11px; background: #14313E; color: #C7D8DE; }
-QPushButton:hover { background: #1C4050; color: #F0F7F7; }
-QPushButton:focus, QToolButton:focus { border: 1px solid #71DFDE; }
-QPushButton#primaryButton { background-color: #55D0D0; color: #06212A; font-weight: 700; padding: 9px 13px; }
-QPushButton#primaryButton:hover { background-color: #7CE3DC; }
-QPushButton#quietButton { background: transparent; color: #9AB5BF; padding: 7px 9px; }
-QPushButton#quietButton:hover { background: #15333E; color: #EAF4F5; }
-QToolButton#quietButton { background: transparent; color: #9AB5BF; border-radius: 8px; font-size: 20px; }
-QToolButton#quietButton:hover { background: #15333E; color: #EAF4F5; }
-QToolButton#dataButton { background: transparent; color: #9AB5BF; border-radius: 8px; padding: 8px 10px; }
-QToolButton#dataButton:hover { background: #15333E; color: #EAF4F5; }
-QPushButton#navButton { text-align: left; padding: 9px 11px; color: #91AAB4; background: transparent; font-size: 14px; }
-QPushButton#navButton:hover { background: #122D39; color: #EAF4F5; }
-QPushButton#navButton[active="true"] { background: #102B36; border-left: 3px solid #55D0D0; color: #74DADB; font-weight: 650; }
-QPushButton#smallButton { background: #173440; padding: 7px 10px; color: #C0D1D6; }
-QToolButton#smallButton { background: #173440; border-radius: 9px; padding: 7px 10px; color: #C0D1D6; }
-QToolButton#smallButton:hover { background: #1C4050; color: #F0F7F7; }
-QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox {
-    background: #0B1E29; border: 1px solid #294653; border-radius: 9px;
-    padding: 7px 9px; color: #EAF4F5; selection-background-color: #1D7F96;
+THEMES = {
+    "light": {
+        "ink": "#26392B", "background": "#F2F6F0", "sidebar": "#E7EEE4", "topbar": "#FBFCFA",
+        "border": "#D8E2D5", "muted": "#667764", "title": "#213626", "section": "#304334",
+        "hint": "#667764", "eyebrow": "#586D59", "surface": "#FFFFFF", "surface_alt": "#F5F8F3",
+        "divider": "#E0E8DD", "rule": "#D6E0D3", "reminder": "#EAF3E8", "reminder_border": "#C8DCC5",
+        "reminder_accent": "#4D8050", "button": "#E4ECE1", "button_text": "#405442",
+        "button_hover": "#D8E5D5", "focus": "#36784A", "primary": "#2F7048", "primary_text": "#FFFFFF",
+        "primary_hover": "#285E3C", "quiet": "#5F735F", "quiet_hover": "#E2EBDF",
+        "nav": "#5E715E", "nav_hover": "#DEE8DA", "active_bg": "#D7E7D5", "active_text": "#285F39",
+        "small": "#E4ECE1", "small_text": "#405542", "input": "#FFFFFF", "input_border": "#C9D7C6",
+        "selection": "#BBD7B8", "popup": "#FFFFFF", "popup_border": "#CEDCCB",
+        "progress": "#DDE7D9", "scroll": "#F2F6F0", "scroll_thumb": "#B9C9B5",
+        "scroll_hover": "#96AC90", "dialog": "#F5F8F3", "menu": "#FFFFFF", "menu_border": "#D2DED0",
+        "menu_selected": "#DFEBDD", "accent": "#2F7048", "positive": "#34764A", "negative": "#B84D40",
+        "warning": "#896813", "wave_tile": "#2F7048", "wave_light": "#E7F2E3", "wave_mid": "#B7D6AF",
+        "chart_grid": "#E0E8DD", "chart_empty": "#D8E3D5", "chart_zero": "#DDE7D9", "chart_label": "#26392B",
+    },
+    "dark": {
+        "ink": "#E4ECE2", "background": "#121A13", "sidebar": "#18231A", "topbar": "#172119",
+        "border": "#314232", "muted": "#A0AE9D", "title": "#F0F4EC", "section": "#E2EAE0",
+        "hint": "#A0AE9D", "eyebrow": "#ACB9A8", "surface": "#1C281E", "surface_alt": "#19251B",
+        "divider": "#304031", "rule": "#3A4A3A", "reminder": "#203326", "reminder_border": "#3E5B40",
+        "reminder_accent": "#82B883", "button": "#29382A", "button_text": "#D6E0D2",
+        "button_hover": "#354737", "focus": "#8FC38B", "primary": "#83B783", "primary_text": "#172418",
+        "primary_hover": "#98C791", "quiet": "#A5B3A2", "quiet_hover": "#29392B",
+        "nav": "#ABB8A8", "nav_hover": "#263629", "active_bg": "#2A402D", "active_text": "#B9DDB3",
+        "small": "#29382A", "small_text": "#D4DED1", "input": "#172119", "input_border": "#405240",
+        "selection": "#36523A", "popup": "#1C281E", "popup_border": "#405240",
+        "progress": "#344535", "scroll": "#121A13", "scroll_thumb": "#536652",
+        "scroll_hover": "#6D846A", "dialog": "#19241A", "menu": "#1C281E", "menu_border": "#405240",
+        "menu_selected": "#2A402D", "accent": "#83B783", "positive": "#88C991", "negative": "#E38B7C",
+        "warning": "#E4C66F", "wave_tile": "#2F7048", "wave_light": "#E7F2E3", "wave_mid": "#B7D6AF",
+        "chart_grid": "#344536", "chart_empty": "#405240", "chart_zero": "#344536", "chart_label": "#DCE6D9",
+    },
 }
-QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QDoubleSpinBox:focus { border: 1px solid #52CBD5; }
+
+ACTIVE_THEME = THEMES["light"]
+INK = ACTIVE_THEME["ink"]
+BLUE = ACTIVE_THEME["accent"]
+MINT = ACTIVE_THEME["positive"]
+CORAL = ACTIVE_THEME["negative"]
+MUTED = ACTIVE_THEME["muted"]
+AMBER = ACTIVE_THEME["warning"]
+SURFACE = ACTIVE_THEME["surface"]
+
+
+STYLESHEET_TEMPLATE = """
+* { font-family: 'DejaVu Sans', 'Segoe UI', Arial, sans-serif; color: @INK@; }
+QMainWindow, QWidget#appRoot { background: @BACKGROUND@; }
+QWidget#sidebar { background: @SIDEBAR@; border-right: 1px solid @BORDER@; }
+QWidget#topbar { background: @TOPBAR@; border-bottom: 1px solid @BORDER@; }
+QLabel { background: transparent; }
+QLabel#muted { color: @MUTED@; }
+QLabel#pageTitle { color: @TITLE@; font-size: 27px; font-weight: 650; }
+QLabel#sectionTitle { color: @SECTION@; font-size: 16px; font-weight: 620; }
+QLabel#metricValue { color: @TITLE@; font-size: 22px; font-weight: 650; }
+QLabel#metricHint { color: @HINT@; font-size: 12px; }
+QLabel#eyebrow { color: @EYEBROW@; font-size: 12px; }
+QFrame#summaryBand { background: @SURFACE@; border: 1px solid @BORDER@; border-radius: 10px; }
+QFrame#surfaceQuiet { background: @SURFACE@; border: 1px solid @BORDER@; border-radius: 12px; }
+QFrame#sidebarSummary { background: @SURFACE_ALT@; border: 1px solid @BORDER@; border-radius: 10px; }
+QFrame#divider { background: @DIVIDER@; border: none; max-height: 1px; }
+QFrame#verticalRule { background: @RULE@; border: none; max-width: 1px; }
+QFrame#reminderStrip { background: @REMINDER@; border: 1px solid @REMINDER_BORDER@; border-left: 3px solid @REMINDER_ACCENT@; border-radius: 8px; }
+QPushButton { border: 0; border-radius: 8px; padding: 8px 11px; background: @BUTTON@; color: @BUTTON_TEXT@; }
+QPushButton:hover { background: @BUTTON_HOVER@; color: @INK@; }
+QPushButton:focus, QToolButton:focus { border: 1px solid @FOCUS@; }
+QPushButton#primaryButton { background-color: @PRIMARY@; color: @PRIMARY_TEXT@; font-weight: 700; padding: 9px 13px; }
+QPushButton#primaryButton:hover { background-color: @PRIMARY_HOVER@; }
+QPushButton#quietButton { background: transparent; color: @QUIET@; padding: 7px 9px; }
+QPushButton#quietButton:hover { background: @QUIET_HOVER@; color: @INK@; }
+QToolButton#quietButton { background: transparent; color: @QUIET@; border-radius: 8px; font-size: 20px; }
+QToolButton#quietButton:hover { background: @QUIET_HOVER@; color: @INK@; }
+QToolButton#dataButton, QToolButton#themeButton { background: transparent; color: @QUIET@; border-radius: 8px; padding: 8px 10px; }
+QToolButton#dataButton:hover, QToolButton#themeButton:hover { background: @QUIET_HOVER@; color: @INK@; }
+QToolButton#themeButton:checked { background: @ACTIVE_BG@; color: @ACTIVE_TEXT@; }
+QPushButton#navButton { text-align: left; padding: 9px 11px; color: @NAV@; background: transparent; border-left: 3px solid transparent; font-size: 14px; }
+QPushButton#navButton:hover { background: @NAV_HOVER@; color: @INK@; }
+QPushButton#navButton[active="true"] { background: @ACTIVE_BG@; border-left: 3px solid @PRIMARY@; color: @ACTIVE_TEXT@; font-weight: 650; }
+QPushButton#smallButton { background: @SMALL@; padding: 7px 10px; color: @SMALL_TEXT@; }
+QToolButton#smallButton { background: @SMALL@; border-radius: 8px; padding: 7px 10px; color: @SMALL_TEXT@; }
+QToolButton#smallButton:hover { background: @BUTTON_HOVER@; color: @INK@; }
+QLineEdit, QComboBox, QDateEdit, QDoubleSpinBox {
+    background: @INPUT@; border: 1px solid @INPUT_BORDER@; border-radius: 8px;
+    padding: 7px 9px; color: @INK@; selection-background-color: @SELECTION@;
+}
+QLineEdit:focus, QComboBox:focus, QDateEdit:focus, QDoubleSpinBox:focus { border: 1px solid @FOCUS@; }
 QComboBox::drop-down { border: 0; width: 24px; }
-QComboBox QAbstractItemView { background: #0E2935; border: 1px solid #31515E; selection-background-color: #1A4E5A; }
-QProgressBar { background: #26434E; border: 0; border-radius: 4px; text-align: center; max-height: 7px; }
-QProgressBar::chunk { background: #52CBD5; border-radius: 4px; }
+QComboBox QAbstractItemView { background: @POPUP@; border: 1px solid @POPUP_BORDER@; selection-background-color: @ACTIVE_BG@; }
+QProgressBar { background: @PROGRESS@; border: 0; border-radius: 4px; text-align: center; max-height: 7px; }
+QProgressBar::chunk { background: @ACCENT@; border-radius: 4px; }
 QScrollArea { background: transparent; border: 0; }
 QScrollArea QWidget#scrollContents { background: transparent; }
-QScrollBar:vertical { background: #07141D; width: 9px; margin: 0; border: 0; }
-QScrollBar::handle:vertical { background: #2B4A56; min-height: 28px; border-radius: 4px; }
-QScrollBar::handle:vertical:hover { background: #426A76; }
+QScrollBar:vertical { background: @SCROLL@; width: 9px; margin: 0; border: 0; }
+QScrollBar::handle:vertical { background: @SCROLL_THUMB@; min-height: 28px; border-radius: 4px; }
+QScrollBar::handle:vertical:hover { background: @SCROLL_HOVER@; }
 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
-QDialog { background: #0E222D; }
+QDialog { background: @DIALOG@; }
 QDialogButtonBox QPushButton { min-width: 80px; }
-QMenu { background: #102632; border: 1px solid #2B4A56; padding: 5px; }
+QMenu { background: @MENU@; border: 1px solid @MENU_BORDER@; padding: 5px; }
 QMenu::item { padding: 8px 24px 8px 12px; border-radius: 5px; }
-QMenu::item:selected { background: #173D48; color: #EAF4F5; }
+QMenu::item:selected { background: @MENU_SELECTED@; color: @INK@; }
 """
+
+
+def stylesheet_for(theme: dict[str, str]) -> str:
+    stylesheet = STYLESHEET_TEMPLATE
+    for name, value in theme.items():
+        stylesheet = stylesheet.replace(f"@{name.upper()}@", value)
+    return stylesheet
+
+
+def activate_theme(mode: str) -> None:
+    global ACTIVE_THEME, INK, BLUE, MINT, CORAL, MUTED, AMBER, SURFACE
+    ACTIVE_THEME = THEMES[mode]
+    INK = ACTIVE_THEME["ink"]
+    BLUE = ACTIVE_THEME["accent"]
+    MINT = ACTIVE_THEME["positive"]
+    CORAL = ACTIVE_THEME["negative"]
+    MUTED = ACTIVE_THEME["muted"]
+    AMBER = ACTIVE_THEME["warning"]
+    SURFACE = ACTIVE_THEME["surface"]
+
+
+STYLESHEET = stylesheet_for(THEMES["light"])
 
 
 def money(cents: int) -> str:
@@ -130,6 +195,29 @@ def short_money(cents: int) -> str:
 def set_indian_currency(spin: QDoubleSpinBox) -> None:
     spin.setLocale(QLocale("en_IN"))
     spin.setGroupSeparatorShown(True)
+
+
+def readable_category_color(value: str) -> str:
+    color = QColor(value)
+
+    def luminance(component: float) -> float:
+        return component / 12.92 if component <= 0.04045 else ((component + 0.055) / 1.055) ** 2.4
+
+    background = QColor(SURFACE)
+
+    def relative_luminance(sample: QColor) -> float:
+        red, green, blue, _ = sample.getRgbF()
+        return 0.2126 * luminance(red) + 0.7152 * luminance(green) + 0.0722 * luminance(blue)
+
+    background_lightness = relative_luminance(background)
+    for _ in range(8):
+        color_lightness = relative_luminance(color)
+        lighter = max(background_lightness, color_lightness)
+        darker = min(background_lightness, color_lightness)
+        if (lighter + 0.05) / (darker + 0.05) >= 4.5:
+            break
+        color = color.darker(115) if background_lightness > 0.5 else color.lighter(115)
+    return color.name()
 
 
 def month_key(value: date) -> str:
@@ -182,10 +270,10 @@ class WaveMark(QWidget):
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor("#123744"))
+        painter.setBrush(QColor(ACTIVE_THEME["wave_tile"]))
         painter.drawRoundedRect(self.rect(), 12, 12)
 
-        for y, color in ((14, "#8DE7DC"), (23, "#52CBD5")):
+        for y, color in ((14, ACTIVE_THEME["wave_light"]), (23, ACTIVE_THEME["wave_mid"])):
             wave = QPainterPath(QPointF(7, y))
             wave.cubicTo(QPointF(12, y - 5), QPointF(17, y + 5), QPointF(22, y))
             wave.cubicTo(QPointF(26, y - 4), QPointF(29, y - 3), QPointF(32, y - 1))
@@ -223,15 +311,15 @@ class SpendingPieChart(QWidget):
                 painter.drawPie(chart, start, -span)
                 start -= span
         else:
-            painter.setPen(QPen(QColor("#294653"), 12))
+            painter.setPen(QPen(QColor(ACTIVE_THEME["chart_empty"]), 12))
             painter.setBrush(Qt.BrushStyle.NoBrush)
             painter.drawEllipse(chart.adjusted(7, 7, -7, -7))
 
         hole = chart.adjusted(diameter * 0.27, diameter * 0.27, -diameter * 0.27, -diameter * 0.27)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor("#0D202B"))
+        painter.setBrush(QColor(SURFACE))
         painter.drawEllipse(hole)
-        painter.setPen(QColor("#EAF4F5" if self.total_cents else "#8AA7B4"))
+        painter.setPen(QColor(INK if self.total_cents else MUTED))
         font = QFont(self.font())
         font.setPointSize(10)
         font.setBold(True)
@@ -259,11 +347,11 @@ class WeeklySpendingChart(QWidget):
 
         for part in range(4):
             y = plot.top() + plot.height() * part / 3
-            painter.setPen(QPen(QColor("#25414C"), 1, Qt.PenStyle.DotLine))
+            painter.setPen(QPen(QColor(ACTIVE_THEME["chart_grid"]), 1, Qt.PenStyle.DotLine))
             painter.drawLine(QPointF(plot.left(), y), QPointF(plot.right(), y))
 
         if peak <= 0:
-            painter.setPen(QColor("#8AA7B4"))
+            painter.setPen(QColor(MUTED))
             painter.drawText(plot, Qt.AlignmentFlag.AlignCenter, "No expenses recorded")
             painter.end()
             return
@@ -275,16 +363,16 @@ class WeeklySpendingChart(QWidget):
             bar_height = max(2.0, value / chart_max * plot.height()) if value else 0
             bar = QRectF(x_center - bar_width / 2, plot.bottom() - bar_height, bar_width, bar_height)
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.setBrush(QColor("#55D0D0" if value else "#294653"))
+            painter.setBrush(QColor(BLUE if value else ACTIVE_THEME["chart_zero"]))
             painter.drawRoundedRect(bar, 4, 4)
 
-            painter.setPen(QColor("#B8CDD3"))
+            painter.setPen(QColor(ACTIVE_THEME["chart_label"]))
             painter.drawText(
                 QRectF(x_center - group_width / 2, max(0, bar.top() - 17), group_width, 16),
                 Qt.AlignmentFlag.AlignCenter,
                 short_money(value),
             )
-            painter.setPen(QColor("#8AA7B4"))
+            painter.setPen(QColor(MUTED))
             painter.drawText(
                 QRectF(x_center - group_width / 2, plot.bottom() + 5, group_width, 18),
                 Qt.AlignmentFlag.AlignCenter,
@@ -432,7 +520,7 @@ class BudgetDialog(QDialog):
 
 
 class CategoryDialog(QDialog):
-    PALETTE = ["#56D2C6", "#5EBFE8", "#8EA8FF", "#B79BFF", "#F3A879", "#F1CC74", "#E98DB6", "#77D8A9"]
+    PALETTE = ["#28786F", "#267596", "#586EA8", "#7759A4", "#B54F37", "#896813", "#A24F76", "#4E7B42"]
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -451,7 +539,11 @@ class CategoryDialog(QDialog):
         self.color_combo = QComboBox()
         for color in self.PALETTE:
             self.color_combo.addItem("●", color)
-            self.color_combo.setItemData(self.color_combo.count() - 1, color, Qt.ItemDataRole.ForegroundRole)
+            self.color_combo.setItemData(
+                self.color_combo.count() - 1,
+                readable_category_color(color),
+                Qt.ItemDataRole.ForegroundRole,
+            )
         form.addRow("Name", self.name_edit)
         form.addRow("Type", self.kind_combo)
         form.addRow("Color", self.color_combo)
@@ -580,10 +672,22 @@ class RecurringDialog(QDialog):
 
 class MainWindow(QMainWindow):
     NAV_ITEMS = ["Overview", "Activity", "Budgets", "Recurring", "Categories"]
+    NAV_GLYPHS = {
+        "Overview": "⌂",
+        "Activity": "≋",
+        "Budgets": "▤",
+        "Recurring": "↻",
+        "Categories": "◇",
+    }
 
     def __init__(self, store: Store):
         super().__init__()
         self.store = store
+        self.dark_mode = store.preference("theme_mode") == "dark"
+        activate_theme("dark" if self.dark_mode else "light")
+        app = QApplication.instance()
+        if app:
+            app.setStyleSheet(stylesheet_for(ACTIVE_THEME))
         self.current_month = date.today().replace(day=1)
         self.current_page = "Overview"
         self.setWindowTitle("Wave: money in motion")
@@ -626,14 +730,16 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(18, 20, 18, 16)
         layout.setSpacing(7)
         brand = QHBoxLayout()
-        mark = WaveMark()
+        self.wave_mark = WaveMark()
         name_col = QVBoxLayout()
         name_col.setSpacing(0)
-        name_col.addWidget(QLabel("wave"))
-        name_col.addWidget(make_label("money in motion", "muted"))
-        name_col.itemAt(0).widget().setStyleSheet("font-size:23px; font-weight:700; color:#F0F7F7;")
-        name_col.itemAt(1).widget().setStyleSheet("font-size:10px; color:#8AA7B4;")
-        brand.addWidget(mark)
+        self.brand_title = QLabel("wave")
+        self.brand_subtitle = make_label("money in motion", "muted")
+        name_col.addWidget(self.brand_title)
+        name_col.addWidget(self.brand_subtitle)
+        self.brand_title.setStyleSheet(f"font-size:23px; font-weight:700; color:{INK};")
+        self.brand_subtitle.setStyleSheet(f"font-size:10px; color:{MUTED};")
+        brand.addWidget(self.wave_mark)
         brand.addSpacing(10)
         brand.addLayout(name_col)
         brand.addStretch(1)
@@ -643,13 +749,33 @@ class MainWindow(QMainWindow):
         layout.addSpacing(5)
         self.nav_buttons: dict[str, QPushButton] = {}
         for item in self.NAV_ITEMS:
-            button = QPushButton(item)
+            button = QPushButton(f"{self.NAV_GLYPHS[item]}   {item}")
             button.setObjectName("navButton")
             button.setProperty("active", item == self.current_page)
+            button.setAccessibleName(item)
+            button.setToolTip(item)
             button.clicked.connect(lambda checked=False, page=item: self.navigate(page))
             layout.addWidget(button)
             self.nav_buttons[item] = button
         layout.addStretch(1)
+
+        summary_card = QFrame()
+        summary_card.setObjectName("sidebarSummary")
+        summary_layout = QVBoxLayout(summary_card)
+        summary_layout.setContentsMargins(11, 9, 11, 9)
+        summary_layout.setSpacing(4)
+        summary_layout.addWidget(make_label("This month", "muted"))
+        self.sidebar_spent = make_label("₹0.00", "metricValue")
+        self.sidebar_spent.setStyleSheet("font-size:18px; font-weight:650;")
+        summary_layout.addWidget(self.sidebar_spent)
+        self.sidebar_plan = make_label("No category limits", "metricHint")
+        summary_layout.addWidget(self.sidebar_plan)
+        self.sidebar_progress = QProgressBar()
+        self.sidebar_progress.setRange(0, 100)
+        self.sidebar_progress.setTextVisible(False)
+        self.sidebar_progress.setFixedHeight(5)
+        summary_layout.addWidget(self.sidebar_progress)
+        layout.addWidget(summary_card)
 
         local_card = QFrame()
         local_card.setObjectName("surfaceQuiet")
@@ -659,6 +785,7 @@ class MainWindow(QMainWindow):
         status = QHBoxLayout()
         dot = QLabel("●")
         dot.setStyleSheet(f"color:{MINT}; font-size:10px;")
+        self.sidebar_privacy_dot = dot
         status.addWidget(dot)
         private_label = make_label("Private by default", "sectionTitle")
         private_label.setStyleSheet("font-size:14px; font-weight:600;")
@@ -694,9 +821,18 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.month_text)
         layout.addWidget(self.month_next)
         layout.addStretch(1)
-        local = make_label("●   Local only", "muted")
-        local.setStyleSheet("color:#9AB5BF; font-size:12px; padding-right:14px;")
-        layout.addWidget(local)
+        self.local_status = make_label("●   Local only", "muted")
+        self.local_status.setStyleSheet(f"color:{MUTED}; font-size:12px; padding-right:14px;")
+        layout.addWidget(self.local_status)
+        self.theme_toggle = QToolButton()
+        self.theme_toggle.setObjectName("themeButton")
+        self.theme_toggle.setText("Dark mode")
+        self.theme_toggle.setCheckable(True)
+        self.theme_toggle.setChecked(self.dark_mode)
+        self.theme_toggle.setAccessibleName("Dark mode")
+        self.theme_toggle.setToolTip("Switch between light and dark forest themes")
+        self.theme_toggle.toggled.connect(self.set_dark_mode)
+        layout.addWidget(self.theme_toggle)
         data_button = QToolButton()
         data_button.setObjectName("dataButton")
         data_button.setText("Data")
@@ -724,6 +860,40 @@ class MainWindow(QMainWindow):
         self.month_text.setText(month_label(self.current_month))
         self.render_page()
 
+    def set_dark_mode(self, enabled: bool) -> None:
+        self.dark_mode = enabled
+        mode = "dark" if enabled else "light"
+        self.store.set_preference("theme_mode", mode)
+        activate_theme(mode)
+        app = QApplication.instance()
+        if app:
+            app.setStyleSheet(stylesheet_for(ACTIVE_THEME))
+        self.brand_title.setStyleSheet(f"font-size:23px; font-weight:700; color:{INK};")
+        self.brand_subtitle.setStyleSheet(f"font-size:10px; color:{MUTED};")
+        self.sidebar_privacy_dot.setStyleSheet(f"color:{MINT}; font-size:10px;")
+        self.local_status.setStyleSheet(f"color:{MUTED}; font-size:12px; padding-right:14px;")
+        self.wave_mark.update()
+        self.refresh_sidebar_summary()
+        self.render_page()
+
+    def refresh_sidebar_summary(self) -> None:
+        totals = self.store.month_totals(self.selected_month)
+        budget_rows = self.store.budget_rows(self.selected_month)
+        planned = sum(row["limit_cents"] for row in budget_rows)
+        spent = totals["expense"]
+        self.sidebar_spent.setText(short_money(spent))
+        self.sidebar_spent.setToolTip(money(spent))
+        if planned:
+            percent = round(spent * 100 / planned)
+            self.sidebar_plan.setText(f"of {short_money(planned)} planned")
+            self.sidebar_progress.setValue(min(100, percent))
+            color = CORAL if percent >= 100 else BLUE
+            self.sidebar_progress.setStyleSheet(f"QProgressBar::chunk{{background:{color}; border-radius:3px;}}")
+            self.sidebar_progress.show()
+        else:
+            self.sidebar_plan.setText("No category limits")
+            self.sidebar_progress.hide()
+
     def navigate(self, page: str) -> None:
         self.current_page = page
         for item, button in self.nav_buttons.items():
@@ -748,6 +918,7 @@ class MainWindow(QMainWindow):
                 widget.deleteLater()
 
     def render_page(self) -> None:
+        self.refresh_sidebar_summary()
         self.clear_page()
         if self.current_page == "Overview":
             self.render_overview()
@@ -770,14 +941,14 @@ class MainWindow(QMainWindow):
         heading.addWidget(make_label(subtitle, "muted"))
         self.page_layout.addLayout(heading)
 
-    def inline_stat(self, title: str, value: str, hint: str = "", color: str = INK) -> QWidget:
+    def inline_stat(self, title: str, value: str, hint: str = "", color: str | None = None) -> QWidget:
         stat = QWidget()
         layout = QVBoxLayout(stat)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(4)
         layout.addWidget(make_label(title, "eyebrow"))
         number = make_label(value, "metricValue")
-        number.setStyleSheet(f"color:{color}; font-size:21px; font-weight:650;")
+        number.setStyleSheet(f"color:{color or INK}; font-size:21px; font-weight:650;")
         layout.addWidget(number)
         if hint:
             layout.addWidget(make_label(hint, "metricHint"))
@@ -794,7 +965,7 @@ class MainWindow(QMainWindow):
         limit = row["limit_cents"]
         spent = row["spent_cents"]
         if limit <= 0:
-            return "No limit", "#8AA7B4", None
+            return "No limit", MUTED, None
         today = date.today()
         current_month = self.selected_month == month_key(today)
         projection = None
@@ -807,15 +978,15 @@ class MainWindow(QMainWindow):
             return "At your limit", CORAL, projection
         if not current_month:
             if self.current_month > today.replace(day=1):
-                return "Starts this month", "#8AA7B4", None
+                return "Starts this month", MUTED, None
             return "Within limit", MINT, None
         if spent == 0:
-            return "No spend yet", "#8AA7B4", None
+            return "No spend yet", MUTED, None
         expected = limit * today.day / days
         if today.day >= 3 and projection is not None and projection > limit * 1.05:
             return "Trending over", CORAL, projection
         if spent > expected * 1.18 and spent > 0:
-            return "A little ahead of pace", "#F1CC74", projection
+            return "A little ahead of pace", AMBER, projection
         return "On pace", MINT, projection
 
     def section_header(self, title: str, trailing: QWidget | None = None) -> QHBoxLayout:
@@ -839,7 +1010,7 @@ class MainWindow(QMainWindow):
                 entry["category_id"],
                 {
                     "name": entry["category_name"],
-                    "color": entry["category_color"],
+                    "color": readable_category_color(entry["category_color"]),
                     "amount_cents": 0,
                 },
             )
@@ -850,7 +1021,7 @@ class MainWindow(QMainWindow):
             pie_segments = pie_segments[:4] + [
                 {
                     "name": "Other",
-                    "color": "#718B96",
+                    "color": readable_category_color(MUTED),
                     "amount_cents": sum(row["amount_cents"] for row in remainder),
                 }
             ]
@@ -872,7 +1043,7 @@ class MainWindow(QMainWindow):
         summary_stats.addWidget(self.inline_stat("Income", money(income), "Money recorded", MINT), 1)
         summary_stats.addWidget(self.vertical_rule())
         summary_stats.addWidget(
-            self.inline_stat("Net this month", net_label, "Income minus spending", CORAL if net < 0 else "#B7A0FF"),
+            self.inline_stat("Net this month", net_label, "Income minus spending", CORAL if net < 0 else BLUE),
             1,
         )
         summary_layout.addLayout(summary_stats)
@@ -1031,7 +1202,7 @@ class MainWindow(QMainWindow):
         layout.setSpacing(4)
         top = QHBoxLayout()
         mark = QLabel(row["mark"])
-        mark.setStyleSheet(f"color:{row['color']}; font-weight:700;")
+        mark.setStyleSheet(f"color:{readable_category_color(row['color'])}; font-weight:700;")
         top.addWidget(mark)
         top.addWidget(make_label(row["name"]))
         top.addStretch(1)
@@ -1048,14 +1219,14 @@ class MainWindow(QMainWindow):
             progress.setTextVisible(False)
             progress.setRange(0, 100)
             progress.setValue(min(100, percent))
-            tint = CORAL if percent >= 100 else row["color"]
+            tint = CORAL if percent >= 100 else readable_category_color(row["color"])
             progress.setStyleSheet(f"QProgressBar::chunk{{background:{tint}; border-radius:4px;}}")
             layout.addWidget(progress)
             status_text, status_color, projection = self.budget_pace(row)
             if projection is not None:
                 status_text = f"{status_text} · projected {money(projection)}"
         else:
-            status_text, status_color = "No limit set", "#8AA7B4"
+            status_text, status_color = "No limit set", MUTED
         status = make_label(status_text, "metricHint")
         status.setStyleSheet(f"color:{status_color}; font-size:11px;")
         layout.addWidget(status)
@@ -1071,7 +1242,7 @@ class MainWindow(QMainWindow):
         badge = QLabel(entry["category_mark"])
         badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
         badge.setFixedSize(25, 25)
-        badge.setStyleSheet(f"color:{entry['category_color']}; font-weight:700; font-size:13px;")
+        badge.setStyleSheet(f"color:{readable_category_color(entry['category_color'])}; font-weight:700; font-size:13px;")
         layout.addWidget(badge)
         details = QVBoxLayout()
         details.setSpacing(3)
@@ -1277,7 +1448,7 @@ class MainWindow(QMainWindow):
         mark = QLabel(entry["mark"])
         mark.setAlignment(Qt.AlignmentFlag.AlignCenter)
         mark.setFixedWidth(25)
-        mark.setStyleSheet(f"color:{entry['color']}; font-weight:700; font-size:13px;")
+        mark.setStyleSheet(f"color:{readable_category_color(entry['color'])}; font-weight:700; font-size:13px;")
         name_group = QVBoxLayout()
         name_group.setSpacing(2)
         name_group.addWidget(make_label(entry["name"], "sectionTitle"))
@@ -1307,7 +1478,7 @@ class MainWindow(QMainWindow):
             bar.setRange(0, 100)
             bar.setValue(min(100, percent))
             bar.setTextVisible(False)
-            color = CORAL if percent >= 100 else entry["color"]
+            color = CORAL if percent >= 100 else readable_category_color(entry["color"])
             bar.setStyleSheet(f"QProgressBar::chunk{{background:{color}; border-radius:4px;}}")
             layout.addWidget(bar)
             pace, pace_color, projection = self.budget_pace(entry)
@@ -1356,7 +1527,7 @@ class MainWindow(QMainWindow):
             summary_layout.addWidget(self.vertical_rule())
             summary_layout.addWidget(self.inline_stat("Spent this month", money(actual_spend), "Across all categories", MINT), 1)
             summary_layout.addWidget(self.vertical_rule())
-            summary_layout.addWidget(self.inline_stat("Categories", str(len(rows)), "Ready for a limit", "#B7A0FF"), 1)
+            summary_layout.addWidget(self.inline_stat("Categories", str(len(rows)), "Ready for a limit", BLUE), 1)
         self.page_layout.addWidget(summary)
 
         button = QPushButton("+  Add budget")
@@ -1387,7 +1558,7 @@ class MainWindow(QMainWindow):
         mark = QLabel(entry["category_mark"])
         mark.setFixedWidth(25)
         mark.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        mark.setStyleSheet(f"color:{entry['category_color']}; font-size:13px; font-weight:700;")
+        mark.setStyleSheet(f"color:{readable_category_color(entry['category_color'])}; font-size:13px; font-weight:700;")
         layout.addWidget(mark)
         details = QVBoxLayout()
         details.setSpacing(3)
@@ -1588,7 +1759,7 @@ class MainWindow(QMainWindow):
         mark = QLabel(category["mark"])
         mark.setAlignment(Qt.AlignmentFlag.AlignCenter)
         mark.setFixedWidth(25)
-        mark.setStyleSheet(f"color:{category['color']}; font-weight:700; font-size:13px;")
+        mark.setStyleSheet(f"color:{readable_category_color(category['color'])}; font-weight:700; font-size:13px;")
         layout.addWidget(mark)
         layout.addWidget(make_label(category["name"], "sectionTitle"), 1)
         rename = QPushButton("Rename")

@@ -17,6 +17,7 @@ The database is created at `~/.local/share/wave/expenses.db` (or `$XDG_DATA_HOME
 
 - Overview with monthly spending, income, cash-flow difference, spending rhythm, and budget progress
 - Overview charts with category spending shares and weekly expense bars
+- Light and dark forest-green themes, with your choice remembered on this device
 - Amounts displayed in Indian rupees (₹) with Indian digit grouping. Existing amounts are not converted.
 - Add, edit, and remove expense or income entries
 - Quick entry with `Ctrl+N`; Wave remembers the last-used category by type
