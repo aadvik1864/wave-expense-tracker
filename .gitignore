@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+
+# Wave data and user exports
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.wavebackup
+*.csv
