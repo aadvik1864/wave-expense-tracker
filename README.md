@@ -11,7 +11,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-The database is created at `~/.local/share/wave/expenses.db` (or `$XDG_DATA_HOME/wave/expenses.db`). Wave starts with **no transactions and no preset budgets**. It includes only a set of common category names so you can add your first entry immediately. Set `WAVE_DB_PATH` to choose a different database location. Any earlier Tide database is left untouched.
+The database is created at `~/.local/share/wave/expenses.db` (or `$XDG_DATA_HOME/wave/expenses.db`). It includes only a set of common category names so you can add your first entry immediately. Set `WAVE_DB_PATH` to choose a different database location. Any earlier Tide database is left untouched.
 
 ## Features
 
